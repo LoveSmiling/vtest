@@ -35,7 +35,11 @@ public class TestService {
         String getUrl = "";
         for (Tv tv : tvs) {
             getUrl = "http://api.hclyz.com:81/mf/" + tv.getAddress();
+            long st = System.currentTimeMillis();
             ResponseEntity<String> ex = restTemplate.exchange(getUrl, HttpMethod.GET, new HttpEntity<>(null, null), String.class);
+            long et = System.currentTimeMillis();
+            long l = et - st;
+            System.out.println("qingqiu"+l);
             String bodys = ex.getBody();
             JSONObject jsonObjects = JSONObject.parseObject(bodys);
             JSONArray zhubo = jsonObjects.getJSONArray("zhubo");
@@ -44,12 +48,16 @@ public class TestService {
             StringBuilder stringBuilder = new StringBuilder();
 
             try {
-                BufferedWriter out = new BufferedWriter(new FileWriter(tv.getAddress()));
+                long startTime = System.currentTimeMillis();
+                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(tv.getAddress()),"UTF-8");
                 for (Zhubo zhubo1 : zhubos) {
-                    stringBuilder.append(zhubo1.getAddress()+"\n");
+                    stringBuilder.append(zhubo1.getTitle()+","+zhubo1.getAddress()+"\n");
                 }
                 out.write(stringBuilder.toString(),0,stringBuilder.toString().length());
                 out.close();
+                long endTime = System.currentTimeMillis();
+                long time = endTime - startTime;
+                System.out.println(time);
                 System.out.println("文件创建成功！");
             } catch (IOException e) {
             }
