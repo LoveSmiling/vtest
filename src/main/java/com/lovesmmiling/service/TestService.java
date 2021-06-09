@@ -39,21 +39,28 @@ public class TestService {
             ResponseEntity<String> ex = restTemplate.exchange(getUrl, HttpMethod.GET, new HttpEntity<>(null, null), String.class);
             long et = System.currentTimeMillis();
             long l = et - st;
-            System.out.println("qingqiu"+l);
+            System.out.println("qingqiu" + l);
             String bodys = ex.getBody();
             JSONObject jsonObjects = JSONObject.parseObject(bodys);
             JSONArray zhubo = jsonObjects.getJSONArray("zhubo");
             List<Zhubo> zhubos = JSONArray.parseArray(zhubo.toJSONString(), Zhubo.class);
 
             StringBuilder stringBuilder = new StringBuilder();
-
+            int i = 1;
             try {
                 long startTime = System.currentTimeMillis();
-                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(tv.getAddress()),"UTF-8");
+                String address = tv.getAddress();
+                String[] split = address.split("\\.");
+                OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(split[0] + ".dpl"), "UTF-8");
+                String s = "DAUMPLAYLIST\n" +
+                        "playname = \n" +
+                        "topindex = 0\n";
+                out.write(s, 0, s.length());
                 for (Zhubo zhubo1 : zhubos) {
-                    stringBuilder.append(zhubo1.getTitle()+","+zhubo1.getAddress()+"\n");
+                    stringBuilder.append(i + "*file*" + zhubo1.getAddress() + "\n" + i + "*title*" + zhubo1.getTitle() + "\n" + i + "*played*0"+"\n");
+                    i++;
                 }
-                out.write(stringBuilder.toString(),0,stringBuilder.toString().length());
+                out.write(stringBuilder.toString(), 0, stringBuilder.toString().length());
                 out.close();
                 long endTime = System.currentTimeMillis();
                 long time = endTime - startTime;
