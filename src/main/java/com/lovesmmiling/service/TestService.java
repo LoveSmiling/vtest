@@ -34,12 +34,9 @@ public class TestService {
 
         String getUrl = "";
         long startTime = System.currentTimeMillis();
-        OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream("tv.dpl"), "UTF-8");
-        String s = "DAUMPLAYLIST\n" +
-                "playname = \n" +
-                "topindex = 0\n";
+        OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream("tv.m3u"), "UTF-8");
+        String s = "#EXTM3U\n";
         out.write(s, 0, s.length());
-        int i = 1;
         for (Tv tv : tvs) {
             getUrl = "http://api.hclyz.com:81/mf/" + tv.getAddress();
             ResponseEntity<String> ex = restTemplate.exchange(getUrl, HttpMethod.GET, new HttpEntity<>(null, null), String.class);
@@ -50,8 +47,7 @@ public class TestService {
             StringBuilder stringBuilder = new StringBuilder();
             try {
                 for (Zhubo zhubo1 : zhubos) {
-                    stringBuilder.append(i + "*file*" + zhubo1.getAddress() + "\n" + i + "*title*" + zhubo1.getTitle() + "\n" + i + "*played*0" + "\n");
-                    i++;
+                    stringBuilder.append("#EXTINF:-1 ,"+zhubo1.getTitle()+"\n"+zhubo1.getAddress()+"\n");
                 }
                 out.write(stringBuilder.toString(), 0, stringBuilder.toString().length());
             } catch (IOException e) {
